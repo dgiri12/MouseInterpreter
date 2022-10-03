@@ -91,9 +91,132 @@ class LexicalAnalyzer(private var source: String) extends Iterable[Lexeme]{
           return new Lexeme("eof", Token.EOF)
 
         // TODO: finish the implementation
-        if (getChar)
+        if(";".contains(getChar)){
+          var myStr: String = ""
+          nextChar
+            while(!hasNewLine){
+              myStr = myStr + getChar
+              nextChar //this loop ignores words until the end of line
+            }
+            nextChar
+            return new Lexeme(myStr, Token.COMMENT)
+          }
 
         
+        if ("?".contains(getChar)){
+          nextChar
+          return new Lexeme("?", Token.INPUT)
+        }
+
+        if ("!".contains(getChar)){
+          nextChar
+          return new Lexeme("!", Token.OUTPUT)
+        }
+
+        if ("=".contains(getChar)){
+          nextChar
+            return new Lexeme("=", Token.ASSIGNMENT)
+        }
+
+        if ("+".contains(getChar)){
+          nextChar
+            return new Lexeme("+", Token.ADDITION)
+        }
+
+        if ("-".contains(getChar)){
+          nextChar
+            return new Lexeme("-", Token.SUBTRACTION)
+        }
+
+        if ("*".contains(getChar)){
+          nextChar
+            return new Lexeme("*", Token.MULTIPLICATION)
+        }
+
+        if ("/".contains(getChar)){
+          nextChar
+          return new Lexeme("/", Token.DIVISION)
+        }
+
+        if ("%".contains(getChar)){
+          nextChar
+          return new Lexeme("%", Token.MODULUS)
+        }
+
+        if ("<".contains(getChar)){
+          nextChar
+            return new Lexeme("<", Token.LESS)
+        }
+        if (">".contains(getChar)){
+          nextChar
+          return new Lexeme(">", Token.GREATER)
+        }
+        if ("^".contains(getChar)){
+          nextChar
+          return new Lexeme("^", Token.BREAK)
+        }
+
+        if (".".contains(getChar)){
+          nextChar
+          return new Lexeme(".", Token.DOT)
+        }
+
+        if ("(".contains(getChar)){
+          nextChar
+          return new Lexeme("(", Token.OPEN_PAR)
+        }
+
+        if (")".contains(getChar)){
+          nextChar
+          return new Lexeme(")", Token.CLOSE_PAR)
+        }
+
+        if ("[".contains(getChar)){
+          nextChar
+          return new Lexeme("[", Token.OPEN_BRACKET)
+        }
+
+        if ("]".contains(getChar)){
+          nextChar
+          return new Lexeme("]", Token.CLOSE_BRACKET)
+        }        
+
+        //now check for double occurences of lexemes
+        //to check double occurences you need a place to store the chars
+        // dont 'nextChar' carelessly
+
+        var storeChar: String = ""
+        storeChar = storeChar + getChar // store the current char so that you can get
+        // the next char, then check double occurences
+        nextChar
+        var doubleChars: String = storeChar + getChar
+        // also you will be needing storeChar later in this code block, you gotta move a step back
+        // to check for identifiers now
+        
+        if ("$$".contains(doubleChars)){
+          nextChar //nextChar here, because you need to consume these characters,
+          // then char is at a fresh position for the next loop iteration
+          return new Lexeme("$$", Token.EO_PRG)
+        }
+
+        if ("<=".contains(doubleChars)){
+          nextChar
+          return new Lexeme("<=", Token.LESS_EQUAL)
+        }
+        if (">=".contains(doubleChars)){
+          nextChar
+          return new Lexeme(">=", Token.GREATER_EQUAL)
+        }
+
+        if ("==".contains(doubleChars)){
+          nextChar
+          return new Lexeme("==", Token.EQUAL)
+        }
+
+        if ("!=".contains(doubleChars)){
+          nextChar
+          return new Lexeme("!=", Token.DIFFERENT)
+        }
 
         // throw an exception if an unrecognizable symbol is found
         throw new Exception("Lexical Analyzer Error: unrecognizable symbol found!")
