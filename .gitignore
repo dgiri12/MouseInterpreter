@@ -1,0 +1,11 @@
+*.mouse
+*.swp
+*.zip
+*.sbt
+.bloop
+.bsp
+.metals
+.vscode
+*.txt
+project
+target
