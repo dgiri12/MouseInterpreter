@@ -13,7 +13,6 @@ class LexicalAnalyzer(private var source: String) extends Iterable[Lexeme]{
   var commentLine: Boolean = true
 
   var input = ""
-  var thereisadot: Boolean = false
   for (line <- Source.fromFile(source).getLines)
     input += line + LexicalAnalyzer.NEW_LINE //adds a new line character at the end of each line in 'input'
   input = input.trim //removes whitespaces
@@ -91,6 +90,18 @@ class LexicalAnalyzer(private var source: String) extends Iterable[Lexeme]{
           return new Lexeme("eof", Token.EOF)
 
         // TODO: finish the implementation
+
+        if ("\"".contains(getChar)){
+          nextChar
+          var myStr: String = ""
+            while(!"\"".contains(getChar)){
+              myStr = myStr + getChar
+              nextChar
+            }
+            nextChar //to skip the last ' " '
+            return new Lexeme(myStr, Token.STRING)
+          }
+        
         if(";".contains(getChar)){
           var myStr: String = ""
           nextChar
@@ -109,13 +120,29 @@ class LexicalAnalyzer(private var source: String) extends Iterable[Lexeme]{
         }
 
         if ("!".contains(getChar)){
+          var storeChar: String = ""
+          storeChar = storeChar + getChar
           nextChar
+          var doubleChars: String = storeChar + getChar
+
+          if ("!=".contains(doubleChars)){
+            nextChar
+            return new Lexeme("!=", Token.DIFFERENT)
+          }
           return new Lexeme("!", Token.OUTPUT)
         }
 
         if ("=".contains(getChar)){
+          var storeChar: String = ""
+          storeChar = storeChar + getChar
           nextChar
-            return new Lexeme("=", Token.ASSIGNMENT)
+          var doubleChars: String = storeChar + getChar
+          
+          if ("==".contains(doubleChars)){
+            nextChar
+            return new Lexeme("==", Token.EQUAL)
+          }
+          return new Lexeme("=", Token.ASSIGNMENT)
         }
 
         if ("+".contains(getChar)){
@@ -144,13 +171,31 @@ class LexicalAnalyzer(private var source: String) extends Iterable[Lexeme]{
         }
 
         if ("<".contains(getChar)){
+          var storeChar: String = ""
+          storeChar = storeChar + getChar
           nextChar
+          var doubleChars: String = storeChar + getChar
+
+          if ("<=".contains(doubleChars)){
+            nextChar
+            return new Lexeme("<=",Token.LESS_EQUAL)
+          }
             return new Lexeme("<", Token.LESS)
         }
+
         if (">".contains(getChar)){
+          var storeChar: String = ""
+          storeChar = storeChar + getChar
           nextChar
+          var doubleChars: String = storeChar + getChar
+
+          if (">=".contains(doubleChars)){
+          nextChar
+          return new Lexeme(">=", Token.GREATER_EQUAL)
+          }
           return new Lexeme(">", Token.GREATER)
         }
+
         if ("^".contains(getChar)){
           nextChar
           return new Lexeme("^", Token.BREAK)
@@ -199,27 +244,36 @@ class LexicalAnalyzer(private var source: String) extends Iterable[Lexeme]{
           return new Lexeme("$$", Token.EO_PRG)
         }
 
-        if ("<=".contains(doubleChars)){
-          nextChar
-          return new Lexeme("<=", Token.LESS_EQUAL)
-        }
-        if (">=".contains(doubleChars)){
-          nextChar
-          return new Lexeme(">=", Token.GREATER_EQUAL)
+        //'identifier' identifier
+        if (LexicalAnalyzer.LETTERS.contains(storeChar)){
+          // no nextChar here because you already did that, you are having to use storeChar...
+          // the 'previous' nextChar
+          // extract the letters into a string until a char is appears which is not allowed to 
+          // be on an identifer.
+          var myStr: String = storeChar
+          while(hasLetter || hasDigit){
+            myStr = myStr + getChar
+            nextChar
+          }
+          // when this loop ends, the iterator is already at a char which is not a letter anymore,
+          // that is a fresh new char for another interation of the loop
+          return new Lexeme(myStr,Token.IDENTIFIER)
         }
 
-        if ("==".contains(doubleChars)){
-          nextChar
-          return new Lexeme("==", Token.EQUAL)
-        }
-
-        if ("!=".contains(doubleChars)){
-          nextChar
-          return new Lexeme("!=", Token.DIFFERENT)
-        }
+        if (LexicalAnalyzer.DIGITS.contains(storeChar)){
+          // extract the digits one by one into a string until a char appears which is not allowed to 
+          // be on a literal.
+          var myStr: String = storeChar
+          while(hasDigit){
+            myStr = myStr + getChar
+            nextChar
+          }
+          return new Lexeme(myStr,Token.LITERAL)
+          }
 
         // throw an exception if an unrecognizable symbol is found
         throw new Exception("Lexical Analyzer Error: unrecognizable symbol found!")
+      
       }
     }
   }
@@ -232,5 +286,20 @@ object LexicalAnalyzer {
   val DIGITS       = "0123456789"
   val PUNCTUATIONS = ".,;:?!"
   val SPECIALS     = "<_@#$%^&()-+='/\\[]{}|"
+  
+   /*  def main(args: Array[String]): Unit = {
+    // checks the command-line for source file
+    if (args.length != 1) {
+      print("Missing source file!")
+      System.exit(1)
+    }
+
+    // iterates over the lexical analyzer, printing the lexemes found
+    val lex = new LexicalAnalyzer("example7.mouse")
+    for (lexeme <- lex)
+      println(lexeme)
+
+  } // end main method  */
+
 }
 
