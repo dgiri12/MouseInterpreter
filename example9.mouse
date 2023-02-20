@@ -1,0 +1,77 @@
+; CS3210 - Principles of Programming Languages - Fall 2022
+; Instructor: Thyago Mota
+; Description: computes nCk (number of ways to select r items from a set of n items where the order of selection does not matter).
+; Student(s) Name(s):
+
+; formula for combination is n! / (r!(n - r)!)
+
+(
+    n "n? " ? =
+    n. 0 < [ "n has to be at least 0!" ]
+    n. 0 >= ^
+)
+
+; special case when n=0
+n. 0 == [ "0! = 1" ]
+
+; all other cases
+n. 0 > [
+    i 2 =
+    f 1 =
+    (
+        i. n. > ^
+        f f. i. * =
+        i i. 1 + =
+    )
+]
+; store value of f into a 
+a f. =
+
+; the following for r!
+(
+    r "r? " ? =
+    r. 0 < [ "r has to be at least 0!" ]
+    r. 0 >= ^
+)
+
+; special case when r=0
+r. 0 == [ "0! = 1" ]
+
+; all other cases
+r. 0 > [
+    i 2 =
+    f 1 =
+    (
+        i. r. > ^
+        f f. i. * =
+        i i. 1 + =
+    )
+]
+; store f into b
+b f. =
+
+; now first do the n-r operation, then that value you put
+; into the factorial algorithm
+d n. r. - =
+; now do d!
+
+; all other cases
+d. 0 > [
+    i 2 =
+    f 1 =
+    (
+        i. d. > ^
+        f f. i. * =
+        i i. 1 + =
+    )
+]
+; store (n-r)! into c
+c f. =
+
+; now do the final calculation
+; first b * c
+z b. c. * =
+; now the final division
+z a. z. / =
+" The nCr value is " z.!
+$$
