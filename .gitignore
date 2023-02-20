@@ -1,4 +1,3 @@
-*.mouse
 *.swp
 *.zip
 *.sbt
@@ -6,6 +5,5 @@
 .bsp
 .metals
 .vscode
-*.txt
 project
 target
